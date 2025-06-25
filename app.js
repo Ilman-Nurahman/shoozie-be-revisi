@@ -1,0 +1,118 @@
+import express from "express";
+import cors from "cors";
+
+import {
+  loginUser,
+  getProduct,
+  getUsers,
+  getUser,
+  addUser,
+  updateUserName,
+  updateUserAddress,
+  updateUserPhone,
+  updateUserGender,
+  updateUserBirthdate,
+  getProductsByBrand,
+} from "./database.js";
+
+const app = express();
+
+// ✅ Tambahkan CORS
+app.use(cors());
+
+app.use(express.json());
+
+// login
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await loginUser(email, password);
+    res.status(200).json({
+      message: "Login berhasil",
+      user: user,
+    });
+  } catch (error) {
+    res.status(401).json({ error: error.message });
+  }
+});
+
+// get product
+app.get("/product", async (req, res) => {
+  const { id_brand } = req.query;
+  const products = await getProductsByBrand(id_brand);
+  res.json(products);
+});
+
+app.get("/product/:id", async (req, res) => {
+  const id = req.params.id;
+  const product = await getProduct(id);
+  res.send(product);
+});
+
+// get users
+app.get("/users", async (req, res) => {
+  const users = await getUsers();
+  res.send(users);
+});
+
+app.get("/users/:id", async (req, res) => {
+  const id = req.params.id;
+  const user = await getUser(id);
+  res.send(user);
+});
+
+app.post("/users", async (req, res) => {
+  try {
+    const newUser = await addUser(req.body);
+    res.status(201).json({
+      message: "User berhasil ditambahkan",
+      user: newUser,
+    });
+  } catch (error) {
+    console.error("Error adding user:", error);
+    res.status(500).json({ error: "Gagal menambahkan user" });
+  }
+});
+
+// PATCH user
+app.patch("/users/:id", async (req, res) => {
+  const id = req.params.id;
+  const { username, address, contact, gender, birthday } = req.body;
+  try {
+    let result;
+    if (username !== undefined) {
+      result = await updateUserName(id, username);
+    }
+    if (address !== undefined) {
+      result = await updateUserAddress(id, address);
+    }
+    if (contact !== undefined) {
+      result = await updateUserPhone(id, contact);
+    }
+    if (gender !== undefined) {
+      result = await updateUserGender(id, gender);
+    }
+    if (birthday !== undefined) {
+      result = await updateUserBirthdate(id, birthday);
+    }
+    if (!result || result.affectedRows === 0) {
+      return res.status(404).send({
+        success: false,
+        message: "User tidak ditemukan atau tidak terupdate",
+      });
+    }
+    res.send({ success: true, message: "User updated" });
+  } catch (err) {
+    res.status(500).send({ success: false, message: err.message });
+  }
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke 💩");
+});
+
+app.listen(8080, "0.0.0.0", () => {
+  console.log("Server is running on port 8080");
+});
