@@ -151,38 +151,39 @@ export async function updateUserBirthdate(idUser, birthday) {
   return result;
 }
 
-// // Tambah ke favorit
-// export async function addFavorite(idUser, idProduct) {
-//   const [result] = await pool.query(
-//     `INSERT INTO favorite (id_user, id_product) VALUES (?, ?)`,
-//     [idUser, idProduct]
-//   );
-//   return result;
-// }
+// Tambah ke favorit
+export async function addFavorite(id_user, id_product) {
+  await pool.query(
+    `INSERT IGNORE INTO favorite (id_user, id_product) VALUES (?, ?)`,
+    [id_user, id_product]
+  );
+}
 
-// // Hapus dari favorit
-// export async function removeFavorite(idUser, idProduct) {
-//   const [result] = await pool.query(
-//     `DELETE FROM favorite WHERE id_user = ? AND id_product = ?`,
-//     [idUser, idProduct]
-//   );
-//   return result;
-// }
+// Hapus dari favorit
+export async function removeFavorite(id_user, id_product) {
+  await pool.query(
+    `DELETE FROM favorite WHERE id_user = ? AND id_product = ?`,
+    [id_user, id_product]
+  );
+}
 
-// // Ambil semua id_product favorit user
-// export async function getFavoriteProductIds(idUser) {
-//   const [rows] = await pool.query(
-//     `SELECT id_product FROM favorite WHERE id_user = ?`,
-//     [idUser]
-//   );
-//   return rows;
-// }
+// Cek status favorit
+export async function isFavorite(id_user, id_product) {
+  const [rows] = await pool.query(
+    `SELECT 1 FROM favorite WHERE id_user = ? AND id_product = ? LIMIT 1`,
+    [id_user, id_product]
+  );
+  return rows.length > 0;
+}
 
-// // Ambil data favorit berdasarkan id_favorite (opsional)
-// export async function getFavoriteById(idFavorite) {
-//   const [rows] = await pool.query(
-//     `SELECT * FROM favorite WHERE id_favorite = ?`,
-//     [idFavorite]
-//   );
-//   return rows[0];
-// }
+// Get all favorite products for a user
+export async function getFavoriteProducts(id_user) {
+  const [rows] = await pool.query(
+    `SELECT p.id_product, p.product_name, p.product_price, p.product_image
+    FROM favorite f
+    JOIN product p ON f.id_product = p.id_product
+    WHERE f.id_user = ?`,
+    [id_user]
+  );
+  return rows;
+}
