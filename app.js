@@ -13,6 +13,10 @@ import {
   updateUserGender,
   updateUserBirthdate,
   getProductsByBrand,
+  addFavorite,
+  removeFavorite,
+  isFavorite,
+  getFavoriteProducts,
 } from "./database.js";
 
 const app = express();
@@ -75,7 +79,7 @@ app.post("/users", async (req, res) => {
   }
 });
 
-// PATCH user
+// patch user
 app.patch("/users/:id", async (req, res) => {
   const id = req.params.id;
   const { username, address, contact, gender, birthday } = req.body;
@@ -105,6 +109,50 @@ app.patch("/users/:id", async (req, res) => {
     res.send({ success: true, message: "User updated" });
   } catch (err) {
     res.status(500).send({ success: false, message: err.message });
+  }
+});
+
+// Tambah ke favorit
+app.post("/favorite", async (req, res) => {
+  const { id_user, id_product } = req.body;
+  try {
+    await addFavorite(id_user, id_product);
+    res.status(201).json({ success: true, message: "Ditambahkan ke favorit" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Hapus dari favorit
+app.delete("/favorite", async (req, res) => {
+  const { id_user, id_product } = req.body;
+  try {
+    await removeFavorite(id_user, id_product);
+    res.json({ success: true, message: "Dihapus dari favorit" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Cek status favorit
+app.get("/favorite", async (req, res) => {
+  const { id_user, id_product } = req.query;
+  try {
+    const fav = await isFavorite(id_user, id_product);
+    res.json({ isFavorite: fav });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Get all favorite products for a user
+app.get("/favorites", async (req, res) => {
+  const { id_user } = req.query;
+  try {
+    const favorites = await getFavoriteProducts(id_user);
+    res.json(favorites);
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
