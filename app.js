@@ -14,6 +14,7 @@ import {
   updateUserBirthdate,
   getProductsByBrand,
   getBrands,
+  addProduct,
   addFavorite,
   removeFavorite,
   isFavorite,
@@ -53,6 +54,20 @@ app.get("/product/:id", async (req, res) => {
   const id = req.params.id;
   const product = await getProduct(id);
   res.send(product);
+});
+
+// post product
+app.post("/product", async (req, res) => {
+  try {
+    const newProduct = await addProduct(req.body);
+    res.status(201).json({
+      message: "Product berhasil ditambahkan",
+      product: newProduct,
+    });
+  } catch (error) {
+    console.error("Error adding product:", error);
+    res.status(500).json({ error: "Gagal menambahkan product" });
+  }
 });
 
 // brands
