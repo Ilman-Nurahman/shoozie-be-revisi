@@ -55,6 +55,7 @@ app.get("/product/:id", async (req, res) => {
   res.send(product);
 });
 
+// brands
 app.get("/brands", async (req, res) => {
   try {
     const brands = await getBrands();

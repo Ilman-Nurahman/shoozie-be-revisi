@@ -62,7 +62,7 @@ export async function getProductsByBrand(id_brand) {
   return rows;
 }
 
-//Brands
+// Brands
 export async function getBrands() {
   const [rows] = await pool.query("SELECT * FROM brand");
   return rows;
