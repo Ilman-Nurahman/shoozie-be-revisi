@@ -230,3 +230,19 @@ export async function getFavoriteProducts(id_user) {
   );
   return rows;
 }
+
+export async function updateProductStatus(id_product, product_status) {
+  const [result] = await pool.query(
+    `UPDATE product SET product_status = ? WHERE id_product = ?`,
+    [product_status, id_product]
+  );
+  return result;
+}
+
+export async function deleteProduct(id_product) {
+  const [result] = await pool.query(
+    `DELETE FROM product WHERE id_product = ?`,
+    [id_product]
+  );
+  return result;
+}

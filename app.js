@@ -15,6 +15,8 @@ import {
   getProductsByBrand,
   getBrands,
   addProduct,
+  updateProductStatus,
+  deleteProduct,
   addFavorite,
   removeFavorite,
   isFavorite,
@@ -67,6 +69,35 @@ app.post("/product", async (req, res) => {
   } catch (error) {
     console.error("Error adding product:", error);
     res.status(500).json({ error: "Gagal menambahkan product" });
+  }
+});
+
+// PATCH product status by id_product
+app.patch("/product/:id/status", async (req, res) => {
+  const id_product = req.params.id;
+  const { product_status } = req.body;
+  try {
+    const result = await updateProductStatus(id_product, product_status);
+    if (!result || result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: "Product tidak ditemukan atau tidak terupdate" });
+    }
+    res.json({ success: true, message: "Product status updated" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// DELETE product by id_product
+app.delete("/product/:id", async (req, res) => {
+  const id_product = req.params.id;
+  try {
+    const result = await deleteProduct(id_product);
+    if (!result || result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: "Product tidak ditemukan atau sudah dihapus" });
+    }
+    res.json({ success: true, message: "Product deleted" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
