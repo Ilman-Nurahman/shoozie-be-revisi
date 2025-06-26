@@ -13,6 +13,7 @@ import {
   updateUserGender,
   updateUserBirthdate,
   getProductsByBrand,
+  getBrands,
   addFavorite,
   removeFavorite,
   isFavorite,
@@ -52,6 +53,15 @@ app.get("/product/:id", async (req, res) => {
   const id = req.params.id;
   const product = await getProduct(id);
   res.send(product);
+});
+
+app.get("/brands", async (req, res) => {
+  try {
+    const brands = await getBrands();
+    res.json(brands);
+  } catch (error) {
+    res.status(500).json({ error: "Gagal mengambil data brand" });
+  }
 });
 
 // get users
