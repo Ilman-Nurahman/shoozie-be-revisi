@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 25, 2025 at 04:42 PM
+-- Generation Time: Jun 26, 2025 at 05:32 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -39,7 +39,9 @@ CREATE TABLE `brand` (
 INSERT INTO `brand` (`id_brand`, `brand_name`) VALUES
 (1, 'Nike'),
 (2, 'Adidas'),
-(3, 'Puma');
+(3, 'Puma'),
+(4, 'Kompas'),
+(5, 'OKX');
 
 -- --------------------------------------------------------
 
@@ -53,6 +55,13 @@ CREATE TABLE `favorite` (
   `id_product` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `favorite`
+--
+
+INSERT INTO `favorite` (`id_favorite`, `id_user`, `id_product`) VALUES
+(19, 11, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -62,7 +71,6 @@ CREATE TABLE `favorite` (
 CREATE TABLE `product` (
   `id_product` int(11) NOT NULL,
   `id_brand` int(11) NOT NULL,
-  `id_favorite` int(11) NOT NULL,
   `product_name` varchar(255) NOT NULL,
   `product_price` int(11) NOT NULL,
   `product_image` text NOT NULL,
@@ -78,9 +86,9 @@ CREATE TABLE `product` (
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`id_product`, `id_brand`, `id_favorite`, `product_name`, `product_price`, `product_image`, `product_location`, `seller_contact`, `created_at`, `updated_at`, `product_status`, `description`) VALUES
-(1, 1, 0, 'Adidas Ultraboost 22', 1800000, 'nike-zoom.png', 'Medan Satria, Bekasi', '08123456789', '2025-06-24 23:16:27', '2025-06-24 23:16:27', 'Ready', 'Sepatu lari Adidas Ultraboost 22 yang nyaman dan stylish. Cocok untuk olahraga maupun daily fashion.'),
-(2, 2, 0, 'Nike Air Max 270', 1700000, 'nike-sb.png', 'Klaten, Jawa Tengah', '08345678901', '2025-06-24 23:16:27', '2025-06-24 23:16:27', 'Ready', 'Sepatu sneakers Nike Air Max 270 yang keren dan nyaman, ideal untuk gaya kasual.');
+INSERT INTO `product` (`id_product`, `id_brand`, `product_name`, `product_price`, `product_image`, `product_location`, `seller_contact`, `created_at`, `updated_at`, `product_status`, `description`) VALUES
+(1, 1, 'Adidas Ultraboost 22', 1800000, 'nike-zoom.png', 'Medan Satria, Bekasi', '08123456789', '2025-06-24 23:16:27', '2025-06-24 23:16:27', 'Ready', 'Sepatu lari Adidas Ultraboost 22 yang nyaman dan stylish. Cocok untuk olahraga maupun daily fashion.'),
+(2, 2, 'Nike Air Max 270', 1700000, 'nike-sb.png', 'Klaten, Jawa Tengah', '08345678901', '2025-06-24 23:16:27', '2025-06-24 23:16:27', 'Ready', 'Sepatu sneakers Nike Air Max 270 yang keren dan nyaman, ideal untuk gaya kasual.');
 
 -- --------------------------------------------------------
 
@@ -150,8 +158,7 @@ ALTER TABLE `favorite`
 --
 ALTER TABLE `product`
   ADD PRIMARY KEY (`id_product`),
-  ADD KEY `id_brand` (`id_brand`),
-  ADD KEY `id_favorite` (`id_favorite`);
+  ADD KEY `id_brand` (`id_brand`);
 
 --
 -- Indexes for table `role`
@@ -174,19 +181,19 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `brand`
 --
 ALTER TABLE `brand`
-  MODIFY `id_brand` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_brand` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `favorite`
 --
 ALTER TABLE `favorite`
-  MODIFY `id_favorite` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_favorite` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `role`
