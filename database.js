@@ -51,6 +51,43 @@ export async function getProduct(idProduct) {
   return rows[0];
 }
 
+export async function addProduct(product) {
+  const {
+    id_brand,
+    product_name,
+    product_price,
+    product_image,
+    product_location,
+    seller_contact,
+    product_status,
+    description,
+  } = product;
+
+  const [result] = await pool.query(
+    `
+    INSERT INTO product (
+      id_brand, product_name, product_price, product_image,
+      product_location, seller_contact, product_status, description
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `,
+    [
+      id_brand,
+      product_name,
+      product_price,
+      product_image,
+      product_location,
+      seller_contact,
+      product_status,
+      description,
+    ]
+  );
+
+  return {
+    id_product: result.insertId,
+    ...product,
+  };
+}
+
 export async function getProductsByBrand(id_brand) {
   if (!id_brand) {
     const [rows] = await pool.query("SELECT * FROM product");
@@ -88,8 +125,16 @@ export async function getUser(idUser) {
 }
 
 export async function addUser(user) {
-  const { username, gender, birthday, address, contact, email, password } =
-    user;
+  const {
+    username,
+    gender,
+    birthday,
+    address,
+    contact,
+    email,
+    password,
+    id_role,
+  } = user;
 
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -98,11 +143,20 @@ export async function addUser(user) {
   const [result] = await pool.query(
     `
     INSERT INTO user (
-      username, gender, birthday,
+      id_role, username, gender, birthday,
       address, contact, email, password_hash
-    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `,
-    [username, gender, birthday, address, contact, email, hashedPassword]
+    [
+      id_role,
+      username,
+      gender,
+      birthday,
+      address,
+      contact,
+      email,
+      hashedPassword,
+    ]
   );
 
   return {
@@ -192,4 +246,20 @@ export async function getFavoriteProducts(id_user) {
     [id_user]
   );
   return rows;
+}
+
+export async function updateProductStatus(id_product, product_status) {
+  const [result] = await pool.query(
+    `UPDATE product SET product_status = ? WHERE id_product = ?`,
+    [product_status, id_product]
+  );
+  return result;
+}
+
+export async function deleteProduct(id_product) {
+  const [result] = await pool.query(
+    `DELETE FROM product WHERE id_product = ?`,
+    [id_product]
+  );
+  return result;
 }
