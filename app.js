@@ -13,6 +13,7 @@ import {
   updateUserGender,
   updateUserBirthdate,
   getProductsByBrand,
+  getProductsByUser,
   getBrands,
   addProduct,
   updateProductStatus,
@@ -108,6 +109,25 @@ app.get("/brands", async (req, res) => {
     res.json(brands);
   } catch (error) {
     res.status(500).json({ error: "Gagal mengambil data brand" });
+  }
+});
+
+// Get products by user ID
+app.get("/products/user/:id_user", async (req, res) => {
+  const id_user = req.params.id_user;
+  try {
+    const products = await getProductsByUser(id_user);
+    res.json({
+      success: true,
+      data: products,
+      message: "Products berhasil diambil"
+    });
+  } catch (error) {
+    console.error("Error getting products by user:", error);
+    res.status(500).json({ 
+      success: false, 
+      error: "Gagal mengambil data products" 
+    });
   }
 });
 

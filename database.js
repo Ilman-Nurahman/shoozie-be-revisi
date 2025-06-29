@@ -99,6 +99,15 @@ export async function getProductsByBrand(id_brand) {
   return rows;
 }
 
+// Get products by user ID
+export async function getProductsByUser(id_user) {
+  const [rows] = await pool.query(
+    `SELECT * FROM product WHERE id_user = ?`,
+    [id_user]
+  );
+  return rows;
+}
+
 // Brands
 export async function getBrands() {
   const [rows] = await pool.query("SELECT * FROM brand");
