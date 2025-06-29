@@ -26,10 +26,12 @@ import {
 
 const app = express();
 
+// Tambahkan limit payload besar untuk upload gambar
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
+
 // ✅ Tambahkan CORS
 app.use(cors());
-
-app.use(express.json());
 
 // login
 app.post("/login", async (req, res) => {
@@ -56,6 +58,9 @@ app.get("/product", async (req, res) => {
 app.get("/product/:id", async (req, res) => {
   const id = req.params.id;
   const product = await getProduct(id);
+  if (!product) {
+    return res.status(404).json({ error: "Produk tidak ditemukan" });
+  }
   res.send(product);
 });
 
@@ -80,7 +85,10 @@ app.patch("/product/:id/status", async (req, res) => {
   try {
     const result = await updateProductStatus(id_product, product_status);
     if (!result || result.affectedRows === 0) {
-      return res.status(404).json({ success: false, message: "Product tidak ditemukan atau tidak terupdate" });
+      return res.status(404).json({
+        success: false,
+        message: "Product tidak ditemukan atau tidak terupdate",
+      });
     }
     res.json({ success: true, message: "Product status updated" });
   } catch (err) {
@@ -94,7 +102,10 @@ app.delete("/product/:id", async (req, res) => {
   try {
     const result = await deleteProduct(id_product);
     if (!result || result.affectedRows === 0) {
-      return res.status(404).json({ success: false, message: "Product tidak ditemukan atau sudah dihapus" });
+      return res.status(404).json({
+        success: false,
+        message: "Product tidak ditemukan atau sudah dihapus",
+      });
     }
     res.json({ success: true, message: "Product deleted" });
   } catch (err) {
@@ -145,6 +156,12 @@ app.get("/users/:id", async (req, res) => {
 
 app.post("/users", async (req, res) => {
   try {
+    // Pastikan id_role dikirim dan valid
+    if (!req.body.id_role || ![1, 2].includes(Number(req.body.id_role))) {
+      return res
+        .status(400)
+        .json({ error: "Role harus dipilih (1=penjual, 2=pembeli)" });
+    }
     const newUser = await addUser(req.body);
     res.status(201).json({
       message: "User berhasil ditambahkan",
@@ -235,7 +252,10 @@ app.get("/favorites", async (req, res) => {
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send("Something broke 💩");
+  if (res.headersSent) {
+    return next(err);
+  }
+  res.status(500).json({ error: "Something broke \uD83D\uDCA9" });
 });
 
 app.listen(8080, "0.0.0.0", () => {

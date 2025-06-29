@@ -134,8 +134,16 @@ export async function getUser(idUser) {
 }
 
 export async function addUser(user) {
-  const { username, gender, birthday, address, contact, email, password } =
-    user;
+  const {
+    username,
+    gender,
+    birthday,
+    address,
+    contact,
+    email,
+    password,
+    id_role,
+  } = user;
 
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -144,11 +152,20 @@ export async function addUser(user) {
   const [result] = await pool.query(
     `
     INSERT INTO user (
-      username, gender, birthday,
+      id_role, username, gender, birthday,
       address, contact, email, password_hash
-    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `,
-    [username, gender, birthday, address, contact, email, hashedPassword]
+    [
+      id_role,
+      username,
+      gender,
+      birthday,
+      address,
+      contact,
+      email,
+      hashedPassword,
+    ]
   );
 
   return {
