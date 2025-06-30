@@ -53,6 +53,7 @@ export async function getProduct(idProduct) {
 
 export async function addProduct(product) {
   const {
+    id_user,
     id_brand,
     product_name,
     product_price,
@@ -66,11 +67,12 @@ export async function addProduct(product) {
   const [result] = await pool.query(
     `
     INSERT INTO product (
-      id_brand, product_name, product_price, product_image,
+      id_user, id_brand, product_name, product_price, product_image,
       product_location, seller_contact, product_status, description
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
+      id_user,
       id_brand,
       product_name,
       product_price,

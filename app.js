@@ -78,8 +78,8 @@ app.post("/product", async (req, res) => {
   }
 });
 
-// PATCH product status by id_product
-app.patch("/product/:id/status", async (req, res) => {
+// PUT product status by id_product
+app.put("/product/:id/status", async (req, res) => {
   const id_product = req.params.id;
   const { product_status } = req.body;
   try {
@@ -124,7 +124,7 @@ app.get("/brands", async (req, res) => {
 });
 
 // Get products by user ID
-app.get("/products/user/:id_user", async (req, res) => {
+app.get("/product/user/:id_user", async (req, res) => {
   const id_user = req.params.id_user;
   try {
     const products = await getProductsByUser(id_user);
