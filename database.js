@@ -267,6 +267,36 @@ export async function updateProductStatus(id_product, product_status) {
   return result;
 }
 
+export async function updateProduct(id_product, product) {
+  const {
+    id_user,
+    id_brand,
+    product_name,
+    product_price,
+    product_location,
+    seller_contact,
+    description,
+  } = product;
+
+  const [result] = await pool.query(
+    `UPDATE product SET 
+      id_user = ?, id_brand = ?, product_name = ?, product_price = ?,
+      product_location = ?, seller_contact = ?, description = ?, updated_at = NOW()
+     WHERE id_product = ?`,
+    [
+      id_user,
+      id_brand,
+      product_name,
+      product_price,
+      product_location,
+      seller_contact,
+      description,
+      id_product,
+    ]
+  );
+  return result;
+}
+
 export async function deleteProduct(id_product) {
   const [result] = await pool.query(
     `DELETE FROM product WHERE id_product = ?`,

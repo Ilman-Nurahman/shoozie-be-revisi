@@ -16,6 +16,7 @@ import {
   getProductsByUser,
   getBrands,
   addProduct,
+  updateProduct,
   updateProductStatus,
   deleteProduct,
   addFavorite,
@@ -75,6 +76,38 @@ app.post("/product", async (req, res) => {
   } catch (error) {
     console.error("Error adding product:", error);
     res.status(500).json({ error: "Gagal menambahkan product" });
+  }
+});
+
+// PUT edit product (except product_image and product_status)
+app.put("/product", async (req, res) => {
+  const { id_product, ...productData } = req.body;
+  
+  if (!id_product) {
+    return res.status(400).json({ 
+      success: false, 
+      error: "id_product is required" 
+    });
+  }
+
+  try {
+    const result = await updateProduct(id_product, productData);
+    if (!result || result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Product tidak ditemukan atau tidak terupdate",
+      });
+    }
+    res.json({ 
+      success: true, 
+      message: "Product berhasil diupdate" 
+    });
+  } catch (error) {
+    console.error("Error updating product:", error);
+    res.status(500).json({ 
+      success: false, 
+      error: "Gagal mengupdate product" 
+    });
   }
 });
 
